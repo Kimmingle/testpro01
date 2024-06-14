@@ -1,0 +1,11 @@
+package com.kh.spring.master.controller;
+
+import org.springframework.stereotype.Controller;
+
+
+//@controller: 범용적인 컨트롤러
+
+@Controller
+public class MemberController {
+	
+}

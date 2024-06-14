@@ -1,0 +1,7 @@
+package com.kh.spring.master.model.service;
+
+
+@Service
+public interface MemberServiceImpl implements MemberService {
+
+}
