@@ -1,0 +1,25 @@
+package com.kh.spring.master.controller;
+
+import org.springframework.stereotype.Controller;
+
+import com.kh.spring.master.model.service.MemberService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+
+//@controller: 범용적인 컨트롤러
+
+@Controller
+@Slf4j
+@RequiredArgsConstructor
+public class MemberController {
+	
+	private final MemberService memberService;
+	
+//	@RequestMapping("/login.do")  //request mapping 타입의 handlermapping 등록
+//	public void login() {
+//		log.info("로그인 요청 보냄?");
+//	}
+//	
+}

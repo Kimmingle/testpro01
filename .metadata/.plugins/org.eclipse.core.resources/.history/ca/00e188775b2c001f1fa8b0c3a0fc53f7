@@ -1,0 +1,22 @@
+package com.kh.spring.master.model.service;
+
+import org.springframework.stereotype.Service;
+
+import com.kh.spring.master.model.vo.Member;
+
+@Service
+public class MemberServiceImpl implements MemberService {
+
+	@Override
+	public int returnNum() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Member login(Member member) {
+		// 내가 수행해야하는 SQL문을 호출
+		return null;
+	}
+
+}

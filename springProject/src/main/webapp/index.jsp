@@ -9,6 +9,6 @@
 <body>
 
 <h2>dd</h2>
-<jsp:forword page="WEB-INF/view/main.jsp" />
+<jsp:forward page="WEB-INF/views/main.jsp" />
 </body>
 </html>

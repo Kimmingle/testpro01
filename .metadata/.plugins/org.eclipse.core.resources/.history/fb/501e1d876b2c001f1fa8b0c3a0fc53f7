@@ -1,0 +1,21 @@
+package com.kh.spring.master.model.repository;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.kh.spring.master.model.vo.Member;
+
+
+//Repository: 저장소
+//영속성/지속성 작업 : 휘발되지않고 저장소에 저장되도록 하는거인듯 (DB crud 작업)
+//즉 여기 있어야할건 DB관련 SQL코드 
+//db랑 소통하는 애
+@Repository
+public class MemberRepository {
+	
+	public Member login(SqlSessionTemplate sqlSession, Member member) {
+		sqlSession.selectOne
+		
+	}
+	
+}

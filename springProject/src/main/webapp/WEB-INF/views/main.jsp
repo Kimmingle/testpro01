@@ -8,13 +8,13 @@
 </head>
 <body>
 
-	<jsp:include page="commom/menubar.jsp"/>
+	<jsp:include page="common/menubar.jsp"/>
 	
 	<div id="content">
 	
 	
 	</div>
 	
-	<jsp:include page="commom/footer.jsp"/>
+	<jsp:include page="common/footer.jsp"/>
 </body>
 </html>

@@ -1,0 +1,12 @@
+package com.kh.spring.master.model.service;
+
+import com.kh.spring.master.model.vo.Member;
+
+public interface MemberService {
+	int returnNum();
+	
+	//기획할때 
+	//로그인, 회원가입, 수정, 삭제, 중복체크, 아이디 
+	
+	Member login(Member member);
+}

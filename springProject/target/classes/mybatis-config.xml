@@ -10,7 +10,7 @@
 	</settings>
 	
 	<typeAliases>
-		<typeAliase></typeAliase>
+		<typeAlias type="com.kh.spring.member.model.vo.Member" alias="member"></typeAlias>
 		
 	</typeAliases>
 	<!-- 주의할점 : 별칭등록을 하기 위해서는 지정해둔 경로에 해당 클레스가 존재해야함 -->
