@@ -199,6 +199,7 @@ public class MemberController {
 		log.info("암호문 : {}", encPwd);
 		
 		member.setUserPwd(encPwd);
+		// userPwd 필드에 평문이 아닌 암호문을 담아서 DB로 보내기
 		String viewName = "";
 		
 		if(memberService.insert(member) > 0){
@@ -219,7 +220,7 @@ public class MemberController {
 	@GetMapping("mypage.do")
 	public String mypage() {
 		
-		return "member/myPage";
+		return "member/mypage";
 	}
 	
 	@PostMapping("update.do")
