@@ -1,5 +1,6 @@
 package com.kh.spring.member.model.repository;
 
+import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,14 @@ public class MemberRepository {
 	public Member login(SqlSessionTemplate sqlSession, Member member) {
 		return sqlSession.selectOne("memberMapper.login", member);
 		
+	}
+	
+	public int insert(SqlSessionTemplate sqlSession, Member member) {
+		return sqlSession.insert("memberMapper.insert", member);
+	}
+	
+	public int update(SqlSessionTemplate sqlSession, Member member) {
+		return sqlSession.update("memberMapper.update", member);
 	}
 	
 }

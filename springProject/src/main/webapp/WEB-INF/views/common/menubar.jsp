@@ -71,14 +71,14 @@
             		<c:when test="${ sessionScope.loginUser eq null}">
 	            				
 		                
-		                <a href="">회원가입</a>
+		                <a href="enroll.do">회원가입</a>
 		                <a data-toggle="modal" data-target="#loginModal">로그인</a> 
 	               </c:when>
                 
 	                <c:otherwise>
 	                    <label>${ sessionScope.loginUser.userName}님 환영합니다</label> &nbsp;&nbsp;
-	                    <a href="">마이페이지</a>
-	                    <a href="">로그아웃</a>
+	                    <a href="mypage.do">마이페이지</a>
+	                    <a href="logout.do">로그아웃</a>
 	                </c:otherwise>
                </c:choose>
             </div>

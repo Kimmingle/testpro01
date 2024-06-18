@@ -2,7 +2,10 @@ package com.kh.spring.member.controller;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 	
 	private final MemberService memberService;
+	private final BCryptPasswordEncoder bcryptPasswordEncoder;
 	
 //	@RequestMapping("/login.do")  //request mapping 타입의 handlermapping 등록
 //	public void login() {
@@ -143,18 +147,105 @@ public class MemberController {
 	public ModelAndView login(Member member, ModelAndView mv, HttpSession session) {
 		
 		Member loginUser = memberService.login(member);
+		//loginUser: 사용자가 입력한 아이디값 들어있을것
+		//member 가 아니라 id만 있어도 됐었구나
+		// 사용자가 입력한 userid와 status값이 Y와 일치하다면
+		//login
 		
-		if(loginUser != null) {
+		
+		//null 예외처리
+		//bcryptPasswordEncoder은 빈으로 등록했기 때문에 null일수가 없음
+		
+		if(  loginUser != null && bcryptPasswordEncoder.matches(member.getUserPwd(), loginUser.getUserPwd())) {
 			session.setAttribute("loginUser", loginUser);
 			mv.setViewName("redirect:/");
 		} else {
-			session.setAttribute("errorMsg", "로그인 실패");
-			mv.setViewName("common/errorPage");
+			mv.addObject("errorMsg", "로그인 실패")
+			.setViewName("common/errorPage");
 		}
 		return mv;
 		
 	}
 	
+	@GetMapping("logout.do")  // a태그는 get
+	public String logout(HttpSession session) {
+		
+		//sessionScope에 존재하는 loginUser제거
+		//session이 없으니까 매개변수로 받을것
+		//session.invalidate(); //세션 초기화(세션 날림- 다른 정보가 들어있다면 같이 날라감)
+		session.removeAttribute("loginUser");  //이렇게하면 로그인 정보만 날라감!
+		
+		
+		return "redirect:/";
+	}
+	
+	@GetMapping("enroll.do")
+	public String enrollForm() {
+		
+		//서블릿에서 뷰 리졸버
+		//접두사와 접미사가  WEB-INF/views/[  ].jsp이니까 이 안에 들어갈 경로 return해줘야함 
+		return "member/enrollForm";
+	}
+	
+	@PostMapping("join.do")
+	public String join(Member member, Model model) {
+		
+		log.info("회원가입 객체  : {}",member);
+		
+		log.info("평문 : {}", member.getUserPwd());
+		
+		
+		String encPwd = bcryptPasswordEncoder.encode(member.getUserPwd());
+		log.info("암호문 : {}", encPwd);
+		
+		member.setUserPwd(encPwd);
+		String viewName = "";
+		
+		if(memberService.insert(member) > 0){
+			viewName= "redirect:/";
+			
+		} else {
+			model.addAttribute("errorMsg", "회원가입실패");
+			viewName = "common/errorPage";
+		}
+		
+		//1.한글이 깨짐  -> web.xml에 스프링이 제공하는 인코딩 필터 등록
+		//2. 비밀번호가 사용자가 입력한 있는 그대로의 평문
+		
+		return viewName;
+		
+	}
+	
+	@GetMapping("mypage.do")
+	public String mypage() {
+		
+		return "member/myPage";
+	}
+	
+	@PostMapping("update.do")
+	public String update(Member member) {
+		
+		log.info("수정요청 멤버 : {}", member);
+		
+		
+		//0/1 들어옴
+		if (memberService.update(member) > 0) {//성공했으면
+			//포워딩하거나 redirect 할 수 있는데 redirect 써야함 
+			//return "member/myPage";   mypage의 return이랑 코드 중복 <--유지보수가 어려움
+			
+			//sessionScope의 loginUser라는 키값으로 덮어씌워줄것 (안그럼 db의 데이터만 바뀌는거임 지금 사용자 정보는 로그인시점의 세션에 있음)
+			//db의 업데이트된 값을 가져오려면 select하는수밖에 없음
+			memberService.login(member);
+			
+			return "redirect:mypage.do";  //--> 유지보수 굿
+			
+			
+		}else {
+			
+		}
+		
+		return null;
+	}
 	
 	
 
