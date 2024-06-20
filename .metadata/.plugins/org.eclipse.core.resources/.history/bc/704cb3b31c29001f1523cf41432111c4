@@ -1,9 +1,0 @@
-package com.kh.spring.main;
-
-import com.kh.spring.StringController;
-
-public class StringRun {
-	
-	StringController sc = new StringController();
-	sc.constructorString();
-}
