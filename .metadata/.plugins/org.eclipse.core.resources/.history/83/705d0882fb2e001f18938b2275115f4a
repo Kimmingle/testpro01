@@ -1,0 +1,68 @@
+package com.kh.spring.board.model.service;
+
+import java.util.List;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kh.spring.board.model.repository.BoardRepository;
+import com.kh.spring.board.model.vo.Board;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class BoardServicelmpl implements BoardService{
+	
+	private final BoardRepository boardRepository;
+	private final SqlSessionTemplate sqlSession;
+	
+	@Autowired
+	public int boardCount() {
+		return boardRepository.boardCount(sqlSession);
+	}
+
+	@Override
+	public List<Board> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int searchCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Board> searchAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int insert(Board board) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int increadeCount(int boardNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Board findbyId(int boardNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int delete(int boardNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+}

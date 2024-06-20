@@ -26,17 +26,17 @@ public class BoardController{
 		//RowBounds 안쓴거
 		
 		//RowBounds 쓴거
-		int listCount;   //현재 일반게시판의 글 개수 => BOARD테이블로부터 SELET COUNT 
+		int listCount;   //현재 일반게시판의 글 개수 => BOARD테이블로부터 SELET COUNT(*)활용해서 조회할 것
 		int currentPage;  // 현재 페이지의 사용자가 요청한 페이지 => 앞에서 넘길것
 		int pageLimit;   //페이지 하단에 보여질 페이징바의 개수 => 10개로 고정
-		int boardLimit;   //한 페이지에 개시글을 몇개 보여줄건지 => 10개로 고정
+		int boardLimit;   //한 페이지에 개시글을 몇개 보여줄건지 => 10개로 고정 (나중에 검색할땐 또 페이징 다시 해야함)
 		
-		int maxPage;  //가장 마지막 페이지가 몊번 페이지인지 (총 페이지의 개수 )
+		int maxPage;  //가장 마지막 페이지가 몇번 페이지인지 (총 페이지의 개수)
 		int startPage;  // 페이지 하단에 보여질 페이징바의 시작 수 
 		int endPage;  // 페이지 하단에 보여질 페이징바의 끝 수 
 		
-		//listCount : 총 게시글의 수 
-		listCount = boardService.boardCount();
+		
+		listCount = boardService.boardCount();  //listCount : 총 게시글의 수 
 		
 		
 		currentPage = page;

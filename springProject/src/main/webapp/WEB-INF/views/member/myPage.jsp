@@ -116,7 +116,7 @@
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer" align="center">
-                        <button type="button" class="btn btn-danger" onclick= "deletePrompt();" >탈퇴하기</button>
+                        <button type="submit" class="btn btn-danger" onclick= "deletePrompt()" >탈퇴하기</button>
                     </div>
                 </form>
                 
@@ -134,7 +134,7 @@
                 			
                 		//}
                 		
-                		return prompt('탈퇴를 하고싶으면 "~~"를 정확히 입력해주세요'); === '~~' ? true : false;
+                		return prompt('탈퇴를 하고싶으면 "aa"를 정확히 입력해주세요') === 'aa' ? true : false;
                 		
                 	}
                 </script>

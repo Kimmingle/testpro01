@@ -5,42 +5,52 @@
 
 <mapper namespace="boardMapper" >
 
-	<!-- 로그인용 쿼리문 -->
-	<select id = "boardCount"  resultType="_int"> 
-		select 
-    board_no,
-    board_title,
-    board_writer,
-    count,
-    create_date,
-    origin_name, 
-    rnum
-from
-    (select 
-        board_no,
-        board_title,
-        board_writer,
-        count,
-        create_date,
-        origin_name, 
-        rownum rnum
-    from
-        (select 
-            board_no,
-            board_title,
-            board_writer,
-            count,
-            create_date,
-            origin_name
-        from
-            board
-        where
-            status = 'Y'
-        order
-            by
-            board_no desc ))
-where
-    rnum between 11 and 16
+	<!-- select는 반환값 꼭 있음 -->
+	<select id ="boardCount" resultType="board"> 
+		SELECT
+			COUNT(BOARD_NO)
+		FROM
+			BOARD
+		WHERE
+			STATUS = 'Y'
+	</select>
+
+	
+	<select id = "findAll"  resultType="_int"> 
+SELECT 
+    BOARD_NO boardNo,
+    BOARD_TITLE boardTitle,
+    BOARD_WRITER boardWriter,
+    COUNT,
+    CREATE_DATE createDate,
+    ORIGIN_NAME originName, 
+   
+FROM
+    (SELECT 
+        BOARD_NO,
+        BOARD_TITLE,
+        BOARD_WRITER,
+        COUNT,
+        CREATE_DATE,
+        ORIGIN_NAME, 
+        ROWNUM RNUM
+    FROM
+        (SELECT 
+            BOARD_NO,
+            BOARD_TITLE,
+            BOARD_WRITER,
+            COUNT,
+            CREATE_DATE,
+            ORIGIN_NAME
+        FROM
+            BOARD
+        WHERE
+            STATUS = 'Y'
+        ORDER
+            BY
+            BOARD_NO DESC ))
+WHERE
+    RNUM BETWEEN  AND ;
 	
 	</select>
 	

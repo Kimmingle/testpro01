@@ -260,9 +260,9 @@ public class MemberController {
 	}
 	
 	@PostMapping("delete.do")
-	public String delete(Member member, HttpSession session) {
-		//Object obj = (Object)new Member;
-		//비밀번호를 잘 맞게 썼나
+	public String delete(Member member, HttpSession session, Model model) {
+		//Object obj = (Object)new Member; 타입 맞춰야함
+		
 		
 		//매개변수 Member => userPwd : 사용자가 입력한 비밀번호 평문
 		//session의 loginUser키값으로 저장되어있는 Member객체의 userPwd필드 :DB에 기록된 암호화된 비밀번호 
@@ -271,25 +271,42 @@ public class MemberController {
 		String encPwd = ((Member)session.getAttribute("loginUser")).getUserPwd();  //멤버의 주소
 		
 		
-		if(bcryptPasswordEncoder.matches(plainPwd, encPwd)) {
-			if(memberService.delete(member.getUserId()) > 0) {  //아이디 찾아서 회원 탈퇴
+		//member.getUserId() 하니까 유저 아이디가 아니라 null담김.. 그래서session에 저장되어있는 id가져옴
+		String getID = ((Member)session.getAttribute("loginUser")).getUserId();
+	
+		System.out.println(member.getUserId());  //null
+		System.out.println(member.getUserPwd());  //1234
+		System.out.println(member.getAge());   //null
+
+		System.out.println(getID);   //id01
+		
+		
+		if(bcryptPasswordEncoder.matches(plainPwd, encPwd)) {  //먼저 비번 맞게 썼는지 확인
+			
+			//if(memberService.delete(member.getUserId()) > 0) {  
+			
+			if(memberService.delete(getID) > 0) {   //getID변수에 담은 유저 아이디 탈퇴시킴
+				
 				session.setAttribute("alertMsg", "탈퇴성공");
 				session.removeAttribute("loginUser");
 				
 				return "redirect:/";
-//			}else {
-//				
-//				model.addAtrribute();
+			}else {
+				
+				System.out.println(((Member)member).getUserId());
+				
+				model.addAttribute("errorMsg", "회원탈퇴실패");
+				return "common/errorPage";
 			}
 			
 		}else {
-			session.setAttribute("alerMsg", "비밀번호 불일치");
+			session.setAttribute("alertMsg", "비밀번호 불일치");
 			
 			return "redirect:mypage.do";
 		}
 		
 		
-		return "null";
+		
 	}
 	
 	

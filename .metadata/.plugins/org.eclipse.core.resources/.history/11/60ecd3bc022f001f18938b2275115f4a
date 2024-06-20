@@ -1,0 +1,42 @@
+package com.kh.spring.board.model.repository;
+
+import java.util.List;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.kh.spring.board.model.vo.Board;
+
+@Repository
+public class BoardRepository {
+
+	public int boardCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("boardMapper.boardCount");
+	}
+
+	public List<Board> findAll(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("boardMapper.findAll");
+	}
+
+	public int searchCount(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public List<Board> searchAll(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int insert(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int increadeCount(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

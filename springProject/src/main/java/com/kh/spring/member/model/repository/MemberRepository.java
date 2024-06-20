@@ -1,4 +1,4 @@
-package com.kh.spring.member.model.repository;
+ package com.kh.spring.member.model.repository;
 
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -29,7 +29,7 @@ public class MemberRepository {
 	}
 
 	public int delete(SqlSessionTemplate sqlSession, String userId) {
-		return sqlSession.update("memberMapper.delete", userId);
+		return sqlSession.delete("memberMapper.delete", userId);
 	}
 	
 }

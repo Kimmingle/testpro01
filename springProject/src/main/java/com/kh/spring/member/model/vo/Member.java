@@ -39,7 +39,7 @@ public class Member {   //클래스를 만들땐 추상화 먼저!
 	private String address;
 	private Date enrollDate;
 	private Date modifyDate;
-	private String staus;
+	private String status;
 	
 	
 
