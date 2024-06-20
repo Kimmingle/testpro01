@@ -50,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int delete(String userId) {
-		return 0;
+		return memberRepository.delete(sqlSession, userId); 
 	}
 
 }

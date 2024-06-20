@@ -155,8 +155,12 @@ public class MemberController {
 		
 		//null 예외처리
 		//bcryptPasswordEncoder은 빈으로 등록했기 때문에 null일수가 없음
+		//if(   bcryptPasswordEncoder.matches(member.getUserPwd(), loginUser.getUserPwd())&&loginUser != null ) {
+		//이렇게하면 없는 아이디를 입력했을때 에러페이지가 아닌 500에러가 뜨게 된다. 
+		//loginUser의 값이 null이지만 점연산자를 사용해 null.getUserPwd 가 되기 때문이다. 
+		//해결 방법 : null검사를 하고 뒤에는 실행되지 않게 한다
 		
-		if(  loginUser != null && bcryptPasswordEncoder.matches(member.getUserPwd(), loginUser.getUserPwd())) {
+		if( loginUser != null &&  bcryptPasswordEncoder.matches(member.getUserPwd(), loginUser.getUserPwd()) ) {
 			session.setAttribute("loginUser", loginUser);
 			mv.setViewName("redirect:/");
 		} else {
@@ -224,7 +228,7 @@ public class MemberController {
 	}
 	
 	@PostMapping("update.do")
-	public String update(Member member) {
+	public String update(Member member,  HttpSession session, Model model) {
 		
 		log.info("수정요청 멤버 : {}", member);
 		
@@ -236,17 +240,58 @@ public class MemberController {
 			
 			//sessionScope의 loginUser라는 키값으로 덮어씌워줄것 (안그럼 db의 데이터만 바뀌는거임 지금 사용자 정보는 로그인시점의 세션에 있음)
 			//db의 업데이트된 값을 가져오려면 select하는수밖에 없음
-			memberService.login(member);
+			//memberService.login(member);
+			
+			session.setAttribute("loginUser", memberService.login(member));
+			
+			//성공했다면 창 띄워줄건데 성공메세지를 담아주자
+				//메세지 모델에 담으면 메세지 안뜸 왜? return을 mypage.do로 보내고 있기 때문에
+				//model.addAttribute("alertMsg", "회원 정보 수정 성공");
+			session.setAttribute("alertMsg", "수정 성공 ");  //세션은 모든 jsp에서 사용 가능하니까 
 			
 			return "redirect:mypage.do";  //--> 유지보수 굿
 			
 			
 		}else {
-			
+			return "common/errorPage";
 		}
 		
-		return null;
+		
 	}
+	
+	@PostMapping("delete.do")
+	public String delete(Member member, HttpSession session) {
+		//Object obj = (Object)new Member;
+		//비밀번호를 잘 맞게 썼나
+		
+		//매개변수 Member => userPwd : 사용자가 입력한 비밀번호 평문
+		//session의 loginUser키값으로 저장되어있는 Member객체의 userPwd필드 :DB에 기록된 암호화된 비밀번호 
+		 
+		String plainPwd = member.getUserPwd();
+		String encPwd = ((Member)session.getAttribute("loginUser")).getUserPwd();  //멤버의 주소
+		
+		
+		if(bcryptPasswordEncoder.matches(plainPwd, encPwd)) {
+			if(memberService.delete(member.getUserId()) > 0) {  //아이디 찾아서 회원 탈퇴
+				session.setAttribute("alertMsg", "탈퇴성공");
+				session.removeAttribute("loginUser");
+				
+				return "redirect:/";
+//			}else {
+//				
+//				model.addAtrribute();
+			}
+			
+		}else {
+			session.setAttribute("alerMsg", "비밀번호 불일치");
+			
+			return "redirect:mypage.do";
+		}
+		
+		
+		return "null";
+	}
+	
 	
 	
 

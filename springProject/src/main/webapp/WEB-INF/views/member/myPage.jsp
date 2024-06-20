@@ -102,7 +102,8 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
-                <form action="" method="post">
+                <form action="delete.do" method="post">
+                <input type = "hidden" value = "${sessionScope.loginUser.userId }" name="userqqId"/>
                     <!-- Modal body -->
                     <div class="modal-body">
                         <div align="center">
@@ -111,13 +112,35 @@
                         </div>
                         <br>
                             <label for="userPwd" class="mr-sm-2">Password : </label>
-                            <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Enter Password" id="userPwd" name=""> <br>
+                            <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Enter Password" id="userPwd" name="userPwd"> <br>
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer" align="center">
-                        <button type="submit" class="btn btn-danger">탈퇴하기</button>
+                        <button type="button" class="btn btn-danger" onclick= "deletePrompt();" >탈퇴하기</button>
                     </div>
                 </form>
+                
+                <script>
+                	function deletePrompt(){
+                		//수행했을때 alert, confirm, prompt
+                		//const value = prompt('탈퇴를 하고싶으면 "~~"를 정확히 입력해주세요');  //함수니까 반환값이 있음
+                		//console.log(value);
+                		
+                		//if( value === '~~'){
+                			//탈퇴를 위한 submit 요청을 보내고 싶은것
+                			
+                		//}else {
+                			//submit요청을 안가게 하고싶은것
+                			
+                		//}
+                		
+                		return prompt('탈퇴를 하고싶으면 "~~"를 정확히 입력해주세요'); === '~~' ? true : false;
+                		
+                	}
+                </script>
+                
+                
+                
             </div>
         </div>
     </div>

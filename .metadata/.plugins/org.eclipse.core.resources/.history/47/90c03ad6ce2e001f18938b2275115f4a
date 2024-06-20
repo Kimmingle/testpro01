@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardMapper" >
+
+	<!-- 로그인용 쿼리문 -->
+	<select id = "boardCount" parameterType="board" resultType="_int"> <!-- mapper에 별칭 member로 했었음 -->
+		SELECT
+				COUNT(BOARD_NO),
+			FROM
+				BOARD
+			WHERE
+				STATUS = 'Y'
+	
+	</select>
+	
+	<insert id="insert" parameterType="member">
+	
+		INSERT
+		  INTO
+		  		MEMBER
+		  		(
+		  		USER_ID, 
+		  		USER_PWD,
+		  		USER_NAME,
+		  		EMAIL,
+		  		GENDER,
+		  		AGE,
+				PHONE,
+				ADDRESS
+		  		)
+		  VALUES
+		  		(
+		  		#{userId},
+		  		#{userPwd},
+		  		#{userName},
+		  		#{email},
+		  		#{gender},
+		  		#{age},
+		  		#{phone},
+		  		#{address}
+		  		)
+	</insert>
+	
+	<update id="update" parameterType="member">
+			UPDATE
+				MEMBER
+			SET
+				USER_NAME = #{userName},
+			  	EMAIL = #{email},
+			  	AGE = #{age},
+				PHONE = #{phone},
+				ADDRESS = #{address},
+				GENDER = #{gender},
+				MODIFY_DATE = SYSDATE
+			WHERE
+				USER_ID =#{userId}
+			
+	
+	</update>
+	
+	<update id = "delete">
+		UPDATE
+			MEMBER
+		SET
+			STATUS = 'N',
+			MODIFY_DATE = SYSDATE
+		WHERE
+			USER_ID = #{abc}
+	
+	</update>
+
+</mapper>

@@ -1,0 +1,61 @@
+package com.kh.spring.board.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.kh.spring.board.model.service.BoardService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequiredArgsConstructor
+public class BoardController {
+	private final BoardService boardService;
+	
+	@GetMapping("boardlist")
+	public String forwarding((@RequestParam(value="page", defaultValue="1"))int page) {
+		
+		//페이징 처리
+		
+		//RowBounds 안쓴거
+		
+		//RowBounds 쓴거
+		int listCount;   //현재 일반게시판의 글 개수 => BOARD테이블로부터 SELET COUNT 
+		int currentPage;  // 현재 페이지의 사용자가 요청한 페이지 => 앞에서 넘길것
+		int pageLimit;   //페이지 하단에 보여질 페이징바의 개수 => 10개로 고정
+		int boardLimit;   //한 페이지에 개시글을 몇개 보여줄건지 => 10개로 고정
+		
+		int maxPage;  //가장 마지막 페이지가 몊번 페이지인지 (총 페이지의 개수 )
+		int startPage;  // 페이지 하단에 보여질 페이징바의 시작 수 
+		int endPage;  // 페이지 하단에 보여질 페이징바의 끝 수 
+		
+		//listCount : 총 게시글의 수 
+		listCount = boardService.boardCount();
+		
+		
+		currentPage = page;
+		pageLimit = 10;
+		boardLimit = 10;
+		
+		//currentPage : 현재 페이지(사용자가 요청한 페이지)
+		currentPage= page;
+		//log.info("게시글의 총 개수 :{},  현재 요청페이지 :{}", listCount , currentPage);
+		
+		
+		// maxPage : 가장 마지막 페이지ㅏ 몇번 메이지이지 (총 페이지 개수 )
+		
+		
+		//공식 구하기
+		//단 boardLimit100이라는 가정하에 규직을 찾아보자
+		//나눗셈 결과네 소수점을 붙여서 올림처리를 할 경우 
+		
+		
+		maxPage = listCount / boardLimit +1;
+		
+		return "board/list";
+	}
+	
+	
+}

@@ -1,0 +1,40 @@
+package com.kh.spring.board.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.kh.spring.board.model.service.BoardService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequiredArgsConstructor
+public class BoardController {
+	private final BoardService boardService;
+	
+	@GetMapping("boardlist")
+	public String forwarding() {
+		
+		//페이징 처리
+		
+		//RowBounds 안쓴거
+		
+		//RowBounds 쓴거
+		int listCount;   //현재 일반게시판의 글 개수 => BOARD테이블로부터 SELET COUNT 
+		int currentPage;  // 현재 페이지의 사용자가 요청한 페이지 => 앞에서 넘길것
+		int pageLimit;
+		int boardLimit;
+		
+		int maxPage;
+		int startPage;
+		int endPage;
+		
+		
+		
+		return "board/list";
+	}
+	
+	
+}
