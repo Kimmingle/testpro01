@@ -1,0 +1,6 @@
+
+6월 21, 2024 09:35:28.549 NEW SESSION
+6월 21, 2024 09:35:28.550 Created TensorFlow Lite XNNPACK delegate for CPU.
+6월 21, 2024 11:37:45.653 [10572:16928:0621/113745.653:ERROR:device_event_log_impl.cc(196)] [11:37:45.653] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+6월 21, 2024 11:45:15.302 [10572:12212:0621/114515.302:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+6월 21, 2024 15:31:26.256 [10572:16928:0621/153126.255:ERROR:interface_endpoint_client.cc(722)] Message 5 rejected by interface blink.mojom.WidgetHost

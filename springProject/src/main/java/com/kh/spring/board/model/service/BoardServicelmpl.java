@@ -1,9 +1,10 @@
 package com.kh.spring.board.model.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.spring.board.model.repository.BoardRepository;
@@ -24,19 +25,19 @@ public class BoardServicelmpl implements BoardService{
 	}
 
 	@Override
-	public List<Board> findAll() {
+	public List<Board> findAll(Map<String, Integer> map) {
 		
-		return boardRepository.findAll(sqlSession);
+		return boardRepository.findAll(sqlSession, map);
 	}
 
 	@Override
-	public int searchCount() {
-		return boardRepository.searchCount(sqlSession);
+	public int searchCount(Map<String, String> map) {
+		return boardRepository.searchCount(sqlSession, map);
 	}
 
 	@Override
-	public List<Board> searchAll() {
-		return boardRepository.searchAll(sqlSession);
+	public List<Board> findByConditionAndKetword(Map<String, String>map, RowBounds rowBounds) {
+		return boardRepository.findByConditionAndKetword(sqlSession, map, rowBounds);
 	}
 
 	@Override
@@ -58,5 +59,7 @@ public class BoardServicelmpl implements BoardService{
 	public int delete(int boardNo) {
 		return 0;
 	}
+
+	
 	
 }

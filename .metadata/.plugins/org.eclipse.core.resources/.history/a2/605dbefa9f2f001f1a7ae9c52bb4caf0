@@ -1,0 +1,196 @@
+package com.kh.spring.board.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.session.RowBounds;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.kh.spring.board.model.service.BoardService;
+import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.common.model.template.PageTemplate;
+import com.kh.spring.common.model.vo.PageInfo;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequiredArgsConstructor
+public class BoardController{
+	
+	
+	private final BoardService boardService;
+	
+	@GetMapping("boardlist")
+	public String forwarding(@RequestParam(value="page", defaultValue="1") int page, Model model) {
+		
+		//페이징 처리
+		
+		//RowBounds 안쓴거
+		
+		//RowBounds 쓴거
+		int listCount;   //현재 일반게시판의 글 개수 => BOARD테이블로부터 SELET COUNT(*)활용해서 조회할 것
+		int currentPage;  // 현재 페이지의 사용자가 요청한 페이지 => 앞에서 넘길것
+		int pageLimit;   //페이지 하단에 보여질 페이징바의 개수 => 10개로 고정
+		int boardLimit;   //한 페이지에 개시글을 몇개 보여줄건지 => 10개로 고정 (나중에 검색할땐 또 페이징 다시 해야함)
+		
+		int maxPage;  //가장 마지막 페이지가 몇번 페이지인지 (총 페이지의 개수)
+		int startPage;  // 페이지 하단에 보여질 페이징바의 시작 수 
+		int endPage;  // 페이지 하단에 보여질 페이징바의 끝 수 
+		
+		
+		listCount = boardService.boardCount();  //listCount : 총 게시글의 수 
+		
+		
+		currentPage = page;
+		pageLimit = 10;
+		boardLimit = 10;
+		
+		//currentPage : 현재 페이지(사용자가 요청한 페이지)
+		currentPage= page;
+		//log.info("게시글의 총 개수 :{},  현재 요청페이지 :{}", listCount , currentPage);
+		
+		
+		// maxPage : 가장 마지막 페이지ㅏ 몇번 메이지이지 (총 페이지 개수 )
+		
+		
+		//공식 구하기
+		//단 boardLimit100이라는 가정하에 규직을 찾아보자
+		//나눗셈 결과네 소수점을 붙여서 올림처리를 할 경우 
+		
+		
+		maxPage = (int)Math.ceil((double) listCount / boardLimit);
+		
+		//Math math = new math();
+		
+		
+		// - startPage : 1, 11, 21, 31, 41, => n* 10+1
+		
+		startPage = (currentPage-1)/pageLimit * pageLimit +1;
+		//endPage = (currentPage-1)/pageLimit + pageLimit -1;
+		endPage = startPage + pageLimit - 1;
+		//start, Limit에 영향을 받음 (단, maxPag도 마지막 페이징바에 대해 영향을 끼침)
+		
+		//endPage= startPage+pageLimit -1;
+		
+		//start페이지가 1이라서 end가 10이 들어갔는데 
+		//max가 다?
+		if(endPage > maxPage) endPage = maxPage;
+		
+//		PageInfo pageInfo = new PageInfo(listCount, currentPage, pageLimit, boardLimit,
+//											maxPage, startPage, endPage);
+		
+		PageInfo pageInfo = PageInfo.builder() 
+									.listCount(listCount)
+									.currentPage(currentPage)
+									.pageLimit(pageLimit)
+									.boardLimit(boardLimit)
+									.maxPage(maxPage)
+									.startPage(startPage)
+									.endPage(endPage)
+									.build();
+		
+		//boardLimit이 10이라는 가정하에 currentPage == 1/2/3  => 시작값은 1, 끝값 10 /11, 20 / 시작값 21, 끝값30
+		//시작값 = (currentPage -1) * boardLimit +1 ;
+		//끝값 = 시작값 + boardLimit -1;
+		
+		Map<String, Integer> map = new HashMap();
+		
+		int startValue = (currentPage-1) * boardLimit +1;
+		int endValue = startValue + boardLimit -1;
+		
+		map.put("startValue", startValue);
+		map.put("endValue", endValue);
+		
+		List<Board> boardList = boardService.findAll(map);
+		
+		log.info("조회된 글의 개수 : {}", boardList.size());
+		log.info("------");
+		log.info("조회된 게시글 목록 : {}", boardList);
+		
+		model.addAttribute("list",boardList);
+		model.addAttribute("pageInfo",pageInfo);
+		
+		return "board/list";
+	}
+	
+	
+	@GetMapping("search.do")
+	public String search(String condition, String keyword, Model model,  @RequestParam(value="page", defaultValue="1") int page) {
+		
+		log.info("검색 조건 : {}",condition);
+		log.info("검색 키워드 : {}", keyword);
+		
+		//사용자가 선택한 조건과 입력한 키워드를 가지고
+		//페이징처리를 끝낸 후 검색결과를 들고가야함 
+		
+		//"writer", "title", "content"
+		//사용자가 입력한 키워드
+		
+		// 어디로 가져가냐 1. String[], List, Set, Map, Class
+		// 이중에 제일 탁월한 선택은?
+		Map<String, String> map = new HashMap();
+		map.put(condition, condition);
+		map.put(keyword, keyword);
+		
+		int searchCount = boardService.searchCount(map);
+		int currentPage = page;
+		int pageLimit = 3;
+		int boardLimit = 3;
+		
+		//int maxPage = (int)Math.ceil((double)searchCount/ boardLimit);
+		
+		PageInfo pageInfo = PageTemplate.getPageInfo(searchCount,
+													currentPage,
+													pageLimit,
+													boardLimit);
+		
+		RowBounds rowBounds = new RowBounds((currentPage-1) * boardLimit, boardLimit);
+		//마이바티스에서는 페이징처리를 이해 rowbound라는 클래스를 제공한다. 
+		
+		List<Board> boardLisr = boardService.findByConditionAndKetword(map, rowBounds);
+		
+		model.addAttribute("list",boardLisr);
+		
+		log.info("검색 조건에 부합하는 행의 수  : {}", searchCount);
+		
+		return "board/list";
+	}
+	
+	
+	@GetMapping("boardForm.do")
+	public String boardForm() {
+		return "board/boardForm";
+	}
+	
+	
+	@PostMapping("insert.do")
+	public String insert(Board board, MultipartFile upfile) {  //파일이 있는지 없는지 확인해야함  MultipartFile[] 여러개의 파일이 배열로 한번에 들어옴
+		log.info("게시글 정보 : {}", board);
+		//log.info("게시글 정보 : {}", upfile);
+		
+		//upfile로 파일이 있는지 없는지 먼저 확인 
+		if(!upfile.getOriginalFilename().equals("") ) {   //빈 문자열(파일이 없음)
+			//파일을 먼저 올려야 파일의 경로를 DB에 저장함
+			//주의 ) 파일의 이름이 겹칠경우 덮어씌워짐
+			
+			//kh_년월일시분초_랜덤한 값.확장자  로 파일명 만들어줄거임
+			
+			 //확장자 구하기
+			String originName = upfile.getOriginalFilename();
+			
+			originName.substring(originName.lastIndexOf("."));   //originName는 배열이라 인덱스 쓸 수 있음
+		}
+		
+		return "redirect:/boardForm.do";
+		
+	}
+	
+}

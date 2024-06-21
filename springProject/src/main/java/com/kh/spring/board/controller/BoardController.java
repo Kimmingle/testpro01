@@ -1,10 +1,24 @@
 package com.kh.spring.board.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.spring.board.model.service.BoardService;
+import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.common.model.template.PageTemplate;
 import com.kh.spring.common.model.vo.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +33,7 @@ public class BoardController{
 	private final BoardService boardService;
 	
 	@GetMapping("boardlist")
-	public String forwarding(@RequestParam(value="page", defaultValue="1") int page) {
+	public String forwarding(@RequestParam(value="page", defaultValue="1") int page, Model model) {
 		
 		//페이징 처리
 		
@@ -63,9 +77,9 @@ public class BoardController{
 		
 		// - startPage : 1, 11, 21, 31, 41, => n* 10+1
 		
-		startPage = (currentPage-1)/pageLimit + pageLimit +1;
-		endPage = (currentPage-1)/pageLimit + pageLimit -1;
-		
+		startPage = (currentPage-1)/pageLimit * pageLimit +1;
+		//endPage = (currentPage-1)/pageLimit + pageLimit -1;
+		endPage = startPage + pageLimit - 1;
 		//start, Limit에 영향을 받음 (단, maxPag도 마지막 페이징바에 대해 영향을 끼침)
 		
 		//endPage= startPage+pageLimit -1;
@@ -91,8 +105,101 @@ public class BoardController{
 		//시작값 = (currentPage -1) * boardLimit +1 ;
 		//끝값 = 시작값 + boardLimit -1;
 		
+		Map<String, Integer> map = new HashMap();
+		
+		int startValue = (currentPage-1) * boardLimit +1;
+		int endValue = startValue + boardLimit -1;
+		
+		map.put("startValue", startValue);
+		map.put("endValue", endValue);
+		
+		List<Board> boardList = boardService.findAll(map);
+		
+		log.info("조회된 글의 개수 : {}", boardList.size());
+		log.info("------");
+		log.info("조회된 게시글 목록 : {}", boardList);
+		
+		model.addAttribute("list",boardList);
+		model.addAttribute("pageInfo",pageInfo);
+		
 		return "board/list";
 	}
 	
+	
+	@GetMapping("search.do")
+	public String search(String condition, String keyword, Model model,  @RequestParam(value="page", defaultValue="1") int page) {
+		
+		log.info("검색 조건 : {}",condition);
+		log.info("검색 키워드 : {}", keyword);
+		
+		//사용자가 선택한 조건과 입력한 키워드를 가지고
+		//페이징처리를 끝낸 후 검색결과를 들고가야함 
+		
+		//"writer", "title", "content"
+		//사용자가 입력한 키워드
+		
+		// 어디로 가져가냐 1. String[], List, Set, Map, Class
+		// 이중에 제일 탁월한 선택은?
+		Map<String, String> map = new HashMap();
+		map.put(condition, condition);
+		map.put(keyword, keyword);
+		
+		int searchCount = boardService.searchCount(map);
+		int currentPage = page;
+		int pageLimit = 3;
+		int boardLimit = 3;
+		
+		//int maxPage = (int)Math.ceil((double)searchCount/ boardLimit);
+		
+		PageInfo pageInfo = PageTemplate.getPageInfo(searchCount,
+													currentPage,
+													pageLimit,
+													boardLimit);
+		
+		RowBounds rowBounds = new RowBounds((currentPage-1) * boardLimit, boardLimit);
+		//마이바티스에서는 페이징처리를 이해 rowbound라는 클래스를 제공한다. 
+		
+		List<Board> boardLisr = boardService.findByConditionAndKetword(map, rowBounds);
+		
+		model.addAttribute("list",boardLisr);
+		
+		log.info("검색 조건에 부합하는 행의 수  : {}", searchCount);
+		
+		return "board/list";
+	}
+	
+	
+	@GetMapping("boardForm.do")
+	public String boardForm() {
+		return "board/boardForm";
+	}
+	
+	
+	@PostMapping("insert.do")
+	public String insert(Board board, HttpSession session, MultipartFile upfile) {  //파일이 있는지 없는지 확인해야함  MultipartFile[] 여러개의 파일이 배열로 한번에 들어옴
+		log.info("게시글 정보 : {}", board);
+		//log.info("게시글 정보 : {}", upfile);
+		
+		//upfile로 파일이 있는지 없는지 먼저 확인 
+		if(!upfile.getOriginalFilename().equals("") ) {   //빈 문자열(파일이 없음)
+			//파일을 먼저 올려야 파일의 경로를 DB에 저장함
+			//주의 ) 파일의 이름이 겹칠경우 덮어씌워짐
+			
+			//kh_년월일시분초_랜덤한 값.확장자  로 파일명 만들어줄거임
+			
+			 //확장자 구하기
+			String originName = upfile.getOriginalFilename();
+			
+			String ext = originName.substring(originName.lastIndexOf("."));   //originName는 배열이라 인덱스 쓸 수 있음
+		
+			int num = (int)(Math.random() * 900 ) +100;  //랜덤
+			
+			String current = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles");
+		}
+		
+		return "redirect:/boardForm.do";
+		
+	}
 	
 }

@@ -161,3 +161,24 @@ WHERE
     
     
     
+-- 조건에 부합하는 게시글의 행의 수 알아내기
+-- 작성자, 내용, 제목에 따른 검색
+SELECT
+    COUNT(BOARD_NO)
+FROM
+    BOARD
+WHERE
+    STATUS='Y'
+AND
+    --사용자가 작성자의 'U'라는 키워드로 검색했을때 
+    BOATD_WRITER LIKE '%' || 'U' || '%';
+
+
+AND
+    --사용자가 글 제목의 'U'라는 키워드로 검색했을때 
+    BOARD_TITLE LIKE '%' || 'JAVA' || '%';
+    
+AND
+    --사용자가 글 내용의 '다'라는 키워드로 검색했을때 
+    BOATD_CONTENT '%' || '다' || '%';
+    
