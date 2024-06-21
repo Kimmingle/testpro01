@@ -1,5 +1,0 @@
-package com.kh.spring.master.model.service;
-
-public class MemberRepository {
-
-}

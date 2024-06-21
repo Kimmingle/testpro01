@@ -109,5 +109,31 @@ WHERE
 	    
 	</select>
 	
+	
+	<insert id = "insert" parameterType="board" >
+		INSERT
+		INTO
+			BOARD
+			(
+			BOARD_NO,
+            BOARD_TITLE,
+            BOARD_WRITER,
+            BOARD_CONTENT,
+            CHANGE_NAME,
+            ORIGIN_NAME
+			)
+		VALUES
+			(
+			SEQ_BNO.NEXTVAL,
+			#{boardTitle },
+			#{boardWriter},
+			#{boardContent },
+			#{changeName},
+			#{originName}
+			)
+
+	
+	</insert>
+	
 
 </mapper>

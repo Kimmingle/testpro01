@@ -42,7 +42,7 @@ public class BoardServicelmpl implements BoardService{
 
 	@Override
 	public int insert(Board board) {
-		return boardRepository.insert(sqlSession);
+		return boardRepository.insert(sqlSession, board);
 	}
 
 	@Override

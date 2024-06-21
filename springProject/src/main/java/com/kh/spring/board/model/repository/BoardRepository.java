@@ -29,8 +29,8 @@ public class BoardRepository {
 		return sqlSession.selectList("boardMapper.findByConditionAndKetword", map, rowBounds);
 	}
 
-	public int insert(SqlSessionTemplate sqlSession) {
-		return 0;
+	public int insert(SqlSessionTemplate sqlSession, Board board) {
+		return sqlSession.insert("boardMapper.insert", board);
 	}
 
 	public int increadeCount(SqlSessionTemplate sqlSession) {

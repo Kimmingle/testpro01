@@ -1,5 +1,7 @@
 package com.kh.spring.board.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -176,7 +178,7 @@ public class BoardController{
 	
 	
 	@PostMapping("insert.do")
-	public String insert(Board board, HttpSession session, MultipartFile upfile) {  //파일이 있는지 없는지 확인해야함  MultipartFile[] 여러개의 파일이 배열로 한번에 들어옴
+	public String insert(Board board, HttpSession session, Model model, MultipartFile upfile) {  //파일이 있는지 없는지 확인해야함  MultipartFile[] 여러개의 파일이 배열로 한번에 들어옴
 		log.info("게시글 정보 : {}", board);
 		//log.info("게시글 정보 : {}", upfile);
 		
@@ -195,10 +197,33 @@ public class BoardController{
 			int num = (int)(Math.random() * 900 ) +100;  //랜덤
 			
 			String current = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles");
+			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
+			String changeName = "KH_" + current +"_" +num+ ext;
+			
+			try {
+				upfile.transferTo(new File(savePath + changeName));
+			} catch (IllegalStateException e) {
+				
+				e.printStackTrace();
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+			
+			board.setOriginName(originName);
+			board.setChangeName(savePath + changeName);
 		}
 		
-		return "redirect:/boardForm.do";
+		if(boardService.insert(board)>0) {
+			
+			session.setAttribute("alertMsg", "게시글 작성 성공");
+			
+			return "redirect:boardlist";
+		}else {
+			model.addAttribute("erroeMsg", "실패");
+			return "common/errorPage";
+		}
+		//return "redirect:/boardForm.do";
 		
 	}
 	

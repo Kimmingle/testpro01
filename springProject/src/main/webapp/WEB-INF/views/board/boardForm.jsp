@@ -44,7 +44,7 @@
             <h2>게시글 작성하기</h2>
             <br>
 
-            <form id="enrollForm" method="post" action="insert.do" enctype="mutipart/form-data">
+            <form id="enrollForm" method="post" action="insert.do" enctype="multipart/form-data">
                 <table algin="center">
                     <tr>
                         <th><label for="title">제목</label></th>
