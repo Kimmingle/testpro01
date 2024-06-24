@@ -31,13 +31,20 @@ public interface BoardService {
 	
 	//게시글 상세보기
 	//조회수 증가
-	int increadeCount(int boardNo);
+	int increaseCount(int boardNo);
 	//한 행을 조회해야하니까 Board로 반환
 	//조회수랑 같이 움직여야함 - Trangection처리
-	Board findbyId(int boardNo);
+	
+	Board findById(int boardNo);
 	
 	//게시글 삭제하기
 	int delete(int boardNo);
+
+
+	int update(Board board);
+
+
+
 
 
 

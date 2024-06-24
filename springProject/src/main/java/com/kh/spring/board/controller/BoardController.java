@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.spring.board.model.service.BoardService;
 import com.kh.spring.board.model.vo.Board;
@@ -190,28 +191,30 @@ public class BoardController{
 			//kh_년월일시분초_랜덤한 값.확장자  로 파일명 만들어줄거임
 			
 			 //확장자 구하기
-			String originName = upfile.getOriginalFilename();
+//			String originName = upfile.getOriginalFilename();
+//			
+//			String ext = originName.substring(originName.lastIndexOf("."));   //originName는 배열이라 인덱스 쓸 수 있음
+//		
+//			int num = (int)(Math.random() * 900 ) +100;  //랜덤
+//			
+//			String current = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+//			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
+//			String changeName = "KH_" + current +"_" +num+ ext;
+//			
+//			try {
+//				upfile.transferTo(new File(savePath + changeName));
+//			} catch (IllegalStateException e) {
+//				
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				
+//				e.printStackTrace();
+//			}
 			
-			String ext = originName.substring(originName.lastIndexOf("."));   //originName는 배열이라 인덱스 쓸 수 있음
-		
-			int num = (int)(Math.random() * 900 ) +100;  //랜덤
+			//saveFile(upfile, session);
 			
-			String current = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
-			String changeName = "KH_" + current +"_" +num+ ext;
-			
-			try {
-				upfile.transferTo(new File(savePath + changeName));
-			} catch (IllegalStateException e) {
-				
-				e.printStackTrace();
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
-			
-			board.setOriginName(originName);
-			board.setChangeName(savePath + changeName);
+			board.setOriginName(upfile.getOriginalFilename());
+			board.setChangeName("/resources/uploadFiles/" + saveFile(upfile, session));
 		}
 		
 		if(boardService.insert(board)>0) {
@@ -227,4 +230,116 @@ public class BoardController{
 		
 	}
 	
+	//localhost/spring/board-detail?boardNo=???  이렇게 들어왔을 것
+	@GetMapping("board-detail")
+	public ModelAndView findById(int boardNo, ModelAndView mv) {
+	//	public String forwarding(@RequestParam(value="page", defaultValue="1") int page, Model model) {
+	// requestParam는 String으로 반환해주는데 메소드는 int를 인자로 받음 =>형변환이 아닌 parsing해야함  ex. int abc = Integer.parseInt("123");
+		
+		//데이터 가공, 서비스 호출, 응답화면 지정 (여기선 인자가 하나라 가공할거 없으니까 바로 서비스 호출)
+		
+		//boardService.increaseCount(boardNo); //서비스 갔다오면 0아니면 1이 담김 -성공했으면 상세조회, 실패했으면 
+		
+		 
+		
+		if(boardService.increaseCount(boardNo) > 0){
+			mv.addObject(boardService.findById(boardNo))
+			.setViewName("/board/boardDetail");
+			
+		}else {
+			mv.addObject("erroeMsg", "게시글 상세조회에 실패").setViewName("common/errorPage");
+		}
+		
+//		ModelAndView mv = new ModelAndView();
+//		mv.setViewName("/board/boardDetail");
+//		
+		return mv;
+	}
+	
+	/*
+	 * deleteById : Client(게시글 작성자)에게 정수형의 boardNo(BOARD테이블의 PK)를 전달받아서 BOARD테이블의 존재하는 STATUS컬럼의 값을 'N'으로
+	 * @param boardNo : 각 행을 식별하기위한 pk
+	 * @param filePath : 요청처리 성공 시 첨부파일을 제거하기 위해 파일이 저장되어있는 경로 및 파일명
+	 * 
+	 * @return : 반환된 View의 논리적인 경로
+	 * 
+	 * */
+	@PostMapping("boardDelete.do")
+	public String deleteById(int boardNo, String filePath, Model model, HttpSession session) {
+		
+		if(boardService.delete(boardNo)>0) {
+			
+			if(!"".equals(filePath)) {
+				//이렇게 빈 문자열을 기준으로 비교를 하면 null exception이 발생하지 않음(null에 equal를 할 순 없지만 equal를 하기 위해서 null을 호출할수는 있으니까)
+				new File(session.getServletContext().getRealPath(filePath)).delete();
+			}
+			
+			session.setAttribute("alertMsg","게시글 삭제 성공");
+			return "redirect:boardlist";
+		} else {
+			model.addAttribute("erroeMsg", "게시글실패");
+			return "common/errorPage";
+		}
+		
+		
+	}
+	
+	@PostMapping("boardUpdateForm.do")
+	public ModelAndView updateForm(ModelAndView mv, int boardNo) {
+		
+		mv.addObject("board", boardService.findById(boardNo))
+		.setViewName("board/boardUpdate");
+		return mv;
+	}
+	
+	
+	
+	@PostMapping("board-update.do")
+	public String update(Board board, MultipartFile reUpFile,HttpSession session) {
+		
+		//DB가서 BOARD테이블 update
+		
+		//새로운 첨부파일이 존재하는지 확인해야함 
+		if(!reUpFile.getOriginalFilename().equals("")) {
+			
+			
+			
+			board.setOriginName(reUpFile.getOriginalFilename());
+			board.setOriginName(saveFile(reUpFile, session));
+		}
+		
+		if (boardService.update(board) > 0) {
+			session.setAttribute("alerMsg", "잘바꿈");
+			return "redirect:board-detail?boardNo="+board.getBoardNo();
+			
+		} else {
+			session.setAttribute("errorMsg", "실패");
+			return "common/errorPage";
+		}
+	}
+	
+	
+	//이런 메소드도 컨트롤러에 적을 수 있음
+	public String saveFile(MultipartFile upfile, HttpSession session) {
+		String originName = upfile.getOriginalFilename();
+		
+		String ext = originName.substring(originName.lastIndexOf("."));   //originName는 배열이라 인덱스 쓸 수 있음
+	
+		int num = (int)(Math.random() * 900 ) +100;  //랜덤
+		
+		String current = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
+		String changeName = "KH_" + current +"_" +num+ ext;
+		
+		try {
+			upfile.transferTo(new File(savePath + changeName));
+		} catch (IllegalStateException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return "/resources/uploadFiles/" + changeName;
+	}
 }

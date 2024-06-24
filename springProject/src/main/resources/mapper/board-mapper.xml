@@ -11,8 +11,10 @@
 	    BOARD_TITLE boardTitle,
 	    BOARD_CONTENT boardContent,
 	    BOARD_WRITER boardWriter,
+	    COUNT count,
 	    CREATE_DATE createDate,
-	    ORIGIN_NAME originName
+	    ORIGIN_NAME originName,
+	    CHANGE_NAME changeName
 	
 	</sql>
 
@@ -37,7 +39,8 @@ FROM
         BOARD_CONTENT, 
         COUNT,
         CREATE_DATE,
-        ORIGIN_NAME, 
+        ORIGIN_NAME,
+        CHANGE_NAME,
         ROWNUM RNUM
     FROM
         (SELECT 
@@ -47,7 +50,8 @@ FROM
             BOARD_CONTENT,
             COUNT,
             CREATE_DATE,
-            ORIGIN_NAME
+            ORIGIN_NAME,
+            CHANGE_NAME
         FROM
             BOARD
         WHERE
@@ -134,6 +138,49 @@ WHERE
 
 	
 	</insert>
+	
+	
+	<update id="increaseCount" parameterType="_int">
+		UPDATE
+			BOARD
+		SET
+			COUNT= COUNT+1 
+		WHERE
+			BOARD_NO = #{boardNo}
+		AND
+			STATUS = 'Y'
+	</update>
+	
+	<select id="findById" parameterType="_int" resultType="board">
+		<include refid="selectBoard"/>
+		FROM
+			BOARD
+		WHERE
+			BOARD_NO = #{boardNo}
+	</select>
+	
+	<update id="delete" parameterType="_int">
+		UPDATE
+			BOARD
+		SET	
+			STATUS = 'N'
+		WHERE
+			BOARD_NO = #{boardNo}
+	
+	</update>
+	
+	<update id="update" parameterType="board">
+		UPDATE
+			BOARD
+		SET
+			BOARD_TITLE = #{boardTitle},
+	    	BOARD_CONTENT= #{boardContent},
+	    	ORIGIN_NAME = #{originName},
+	    	CHANGE_NAME = #{changeName}
+		WHERE
+			BOARD_NO = #{boardNo}
+	
+	</update>
 	
 
 </mapper>

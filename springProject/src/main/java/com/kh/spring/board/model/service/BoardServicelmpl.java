@@ -46,18 +46,23 @@ public class BoardServicelmpl implements BoardService{
 	}
 
 	@Override
-	public int increadeCount(int boardNo) {
-		return boardRepository.increadeCount(sqlSession);
+	public int increaseCount(int boardNo) {
+		return boardRepository.increaseCount(sqlSession, boardNo);
 	}
 
 	@Override
-	public Board findbyId(int boardNo) {
-		return null;
+	public Board findById(int boardNo) {
+		return boardRepository.findById(sqlSession, boardNo);
 	}
 
 	@Override
 	public int delete(int boardNo) {
-		return 0;
+		return boardRepository.delete(sqlSession, boardNo);
+	}
+
+	@Override
+	public int update(Board board) {
+		return boardRepository.update(sqlSession, board);
 	}
 
 	

@@ -81,7 +81,7 @@
                 		</c:when>
 	                	<c:otherwise>
 		                    <c:forEach items="${ list }" var="board">
-		                    	<tr>
+		                    	<tr class="board-detail" id ="boardNo-${board.boardNo }">
 		                    		<td>${board.boardNo }</td>
 		                    		<td>${board.boardTitle }</td>
 		                    		<td>${board.boardWriter }</td>
@@ -89,7 +89,7 @@
 		                    		<td>${board.createDate }</td>
 		                    		<td>
 		                    			<c:if test = "${ not empty board.originName }">
-		                    			ㅔㅔㅔ
+		                    			파일첨부됨
 		                    			</c:if>
 	                    			</td>
 		                    	</tr>
@@ -100,6 +100,51 @@
                 </tbody>
             </table>
             <br>
+            
+            <script>
+            	$(() =>{
+            		//어떤 친구들을(eventTarget) 언제(eventType)
+            		//addEventListener() 이 권장사항이긴 함
+            		//consol.log($('tr').not('.board-detail'));
+            		
+            		
+            		$('.board-detail').click(e =>{
+            			//서버에 요청을 보내기 위해서 url변경해서 보냄
+            			//console.log(window);
+            			
+            			/*
+            			js에서 객체의 속성을 변경하는 방법 ex.student에서 grade의 값을 바꾸어보자
+            			const student = {
+            					name : '홍길동',
+            					grade : 1
+            			};
+            			
+            			student.grade = 2;
+            			console.log(student);
+            			*/
+            			
+            			
+            			//location.href = '리터럴 값'; 이렇게 바꿈
+            			//location.href = '.board-detail';
+            			//이때 상세보기할 글 번호까지 같이 보내줘야함
+            			//console.log(e);  //이 e 객체에서 글 번호를 어케 들고올거냐!!
+            			//target 또는 currentTarget으로 찾음. 
+            			location.href = 'board-detail?boardNo=' + e.currentTarget.id.split('-')[1];
+            			
+            			
+            			//consol.log(e.currentTarget);
+            			
+            			//console.log($(e.currentTarget).children().eq(0).text());
+            			//currentTarget의 0번째 요소를 선택(글 번호가 콘솔에 출력됨)
+            			
+            			//--=>제일 적합한건 id주는거 
+            		});
+            		
+            		//$('.board-detail').on('click', handler())
+            		
+            	} );
+            
+            </script>
 
             <div id="pagingArea">
                 <ul class="pagination">
