@@ -1,4 +1,4 @@
-delete from member where user_id='id01';
+delete from member where user_id='admin';
 
 select * from member;
 
@@ -181,4 +181,49 @@ AND
 AND
     --사용자가 글 내용의 '다'라는 키워드로 검색했을때 
     BOATD_CONTENT '%' || '다' || '%';
+    
+    
+    
+update custom set pw='$2a$10$sVtTU6E40Fr0sgM0TRn5g.v0Q0WLb8HTmhgs07tnBAuHObdJ6EeN2' where id='admin';
+
+
+
+
+
+
+-- USER_NAME는 MEMBER테이블에 있으니까 JOIN해야 들고올 수 있음
+SELECT 
+    CHANGE_NAME,
+    BOARD_TITLE,
+    USER_NAME
+FROM
+    BOARD
+WHERE
+    CHANGE_NAME IS NOT NULL;
+    
+--    
+--크로스 조인
+SELECT 
+    CHANGE_NAME,
+    BOARD_TITLE,
+    USER_NAME
+FROM
+    BOARD, MEMBER  
+    
+--
+SELECT 
+    CHANGE_NAME,
+    BOARD_TITLE,
+    USER_NAME,
+    BOARD_CONTENT,
+    CREATE_DATE
+FROM
+    BOARD, MEMBER
+WHERE
+    BOARD.BOARD_WRITER = MEMBER.USER_ID
+AND
+    CHANGE_NAME IS NOT NULL
+ORDER
+BY
+    BOARD_NO DESC;
     

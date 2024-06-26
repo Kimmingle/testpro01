@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
    <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -41,6 +42,8 @@
                 <div class="form-group">
                     <label for="userId">* ID : </label>
                     <input type="text" class="form-control" id="userId" placeholder="Please Enter ID" name="userId" required> <br>
+					<div id="checkResult" style="display:none; font-size:0.7em"></div>
+					
 
                     <label for="userPwd">* Password : </label>
                     <input type="password" class="form-control" id="userPwd" placeholder="Please Enter Password" name="userPwd" required> <br>
@@ -71,12 +74,62 @@
                 </div> 
                 <br>
                 <div class="btns" align="center">
-                    <button type="submit" class="btn btn-primary">회원가입</button>
+                    <button type="submit" class="btn btn-primary disabled">회원가입</button>
                     <button type="reset" class="btn btn-danger">초기화</button>
                 </div>
             </form>
+            
+            
+            <script>
+            	$(() => {
+            		const $idInput = $('.form-group #userId');
+            		const $checkResult = $('#checkResult');
+            		const $joinSubmit = $('#join-btn');
+            		
+            		$idInput.keyup(()=>{
+            			
+            			//console.log($idInput.val().length);
+            			
+            			//불필요한 접근 막기위해 다섯글자 이상으로 입력했을때만 ajax요청 보낼것
+            			if($idInput.val().length >= 5){
+            				
+            				$.ajax({
+            					
+            					url : 'idCheck.do',
+            					type : 'get',
+            					data : {checkId :  $idInput.val()},
+            					
+            					success : ()=>{
+            						//console.log(response);
+            						
+            						if(response.substr(4)==='N'){
+            							$checkResult.show().css('color', 'crimson').text('중복');
+            							$joinSubmit.attr('disabled', true);
+            						}else {
+            							$checkResult.show().css('color', 'crimson').text('사용가능');
+            						}
+            					},
+            					error : ()=> {
+            						
+            						console.log('실패');
+            					}
+            					
+            				});
+            			} else {
+            				
+            				$checkResult.hide();
+							$joinSubmit.attr('disabled', true);
+            			}
+            			
+            		});
+            		
+            		
+            	});
+            </script>
         </div>
         <br><br>
+        
+        
 
     </div>
 

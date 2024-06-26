@@ -43,6 +43,10 @@ public interface BoardService {
 
 	int update(Board board);
 
+	
+	//사진 게시글 목록
+	List<Board> selectImg();
+
 
 
 

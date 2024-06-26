@@ -214,6 +214,7 @@ public class BoardController{
 			//saveFile(upfile, session);
 			
 			board.setOriginName(upfile.getOriginalFilename());
+		
 			board.setChangeName("/resources/uploadFiles/" + saveFile(upfile, session));
 		}
 		
@@ -305,7 +306,7 @@ public class BoardController{
 			
 			
 			board.setOriginName(reUpFile.getOriginalFilename());
-			board.setOriginName(saveFile(reUpFile, session));
+			board.setChangeName(saveFile(reUpFile, session));
 		}
 		
 		if (boardService.update(board) > 0) {
@@ -342,4 +343,21 @@ public class BoardController{
 		
 		return "/resources/uploadFiles/" + changeName;
 	}
+	
+	
+	@GetMapping("img-board")
+	public String imges(Model model) {
+		
+		//List<Board> img = boardService.selectImg();  이거 왜 model로 바꿈?
+		
+		model.addAttribute( "board", boardService.selectImg() );
+		return "board/imgList";
+	}
+	
+	
+	
+	
+	
+	
+	
 }

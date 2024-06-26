@@ -65,6 +65,11 @@ public class BoardServicelmpl implements BoardService{
 		return boardRepository.update(sqlSession, board);
 	}
 
+	@Override
+	public List<Board> selectImg() {
+		return boardRepository.selectImg(sqlSession);
+	}
+
 	
 	
 }
